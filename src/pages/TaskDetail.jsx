@@ -32,7 +32,7 @@ export default function TaskDetail() {
       await api.patch(`/tasks/${id}`, {
         status: "ASSIGNED",
         helper: {
-          name: user?.name || "Verified Helper",
+          name: user?.user_metadata?.full_name || "Verified Helper",
           rating: "5.0", // Hardcoded rating for MVP
           reviews: 1
         }

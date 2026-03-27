@@ -19,7 +19,9 @@ export default function ActiveGigs() {
         // 1. Are NOT OPEN (so they are ASSIGNED, COMPLETED, or PAID)
         // 2. Are assigned specifically to this current logged-in Helper
         const myGigs = response.data.filter(
-          task => task.status !== "OPEN" && task.helper?.name === user?.name
+          task => task.status !== "OPEN" && 
+                 task.helper?.name && 
+                 task.helper.name === user?.user_metadata?.full_name
         );
         
         setTasks(myGigs);
