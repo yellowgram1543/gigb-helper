@@ -1,0 +1,204 @@
+/* 1. Color System & Variables */
+:root {
+  --color-primary: #003366;      /* Dark Blue: Main text/headings */
+  --color-accent-red: #E63946;   /* Red: Danger/Action */
+  --color-accent-pink: #FF85A1;  /* Pink: Secondary Action */
+  --color-peach: #FFD1B3;        /* Peach: Warm surfaces */
+  --color-cream: #FFFDF5;        /* Cream: Cards/Inputs */
+  --color-bg-light: #E0F2FE;     /* Light Blue: Page Background */
+  
+  --color-text: #001F3F;         /* Very Dark Blue */
+  --color-white: #FFFFFF;
+  
+  --border-thick: 3px solid var(--color-text);
+  --radius-pill: 50px;
+  --radius-soft: 20px;
+  
+  --shadow-soft: 0 6px 0 rgba(0, 31, 63, 0.15);
+  --shadow-hover: 0 10px 0 rgba(0, 31, 63, 0.2);
+  
+  --transition: all 0.25s ease-in-out;
+}
+
+/* 2. Global Resets & Typography */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  color: var(--color-text);
+  background: var(--color-bg-light);
+  min-height: 100vh;
+  overflow-x: hidden;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 3. Signature Background: Light Blue Pastel */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -2;
+  background: var(--color-bg-light);
+  filter: none;
+}
+
+/* 4. Core Component Styles */
+
+/* 4.1 Cards */
+.card {
+  background: var(--color-cream);
+  border: var(--border-thick);
+  border-radius: var(--radius-soft);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-soft);
+  transition: var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+/* 4.2 Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.8rem 1.8rem;
+  font-weight: 700;
+  border: var(--border-thick);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  transition: var(--transition);
+  text-decoration: none;
+  font-family: 'Nunito', sans-serif;
+}
+
+.btn:active {
+  transform: scale(0.96);
+}
+
+.btn-primary {
+  background: var(--color-accent-pink);
+  color: var(--color-text);
+}
+
+.btn-primary:hover {
+  background: var(--color-peach);
+}
+
+.btn-secondary {
+  background: var(--color-accent-red);
+  color: white;
+}
+
+/* 4.3 Input Fields */
+input, textarea {
+  width: 100%;
+  padding: 1rem;
+  border: var(--border-thick);
+  border-radius: var(--radius-soft);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1rem;
+  transition: var(--transition);
+  outline: none;
+  background: var(--color-white);
+}
+
+input:focus {
+  border-color: var(--color-primary);
+  background: var(--color-cream);
+}
+
+/* 5. Utility Typography */
+h1, h2, h3, h4 {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+  margin-bottom: 1rem;
+  color: var(--color-primary);
+}
+
+.text-small { font-size: 0.875rem; font-weight: 700; }
+
+/* 6. Loader Animation */
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 5px solid var(--color-peach);
+  border-bottom-color: var(--color-primary);
+  border-radius: 50%;
+  display: inline-block;
+  box-sizing: border-box;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 7. Navbar Styles */
+.navbar {
+  position: sticky;
+  top: 20px;
+  z-index: 1000;
+  margin: 0 20px 40px;
+  background: var(--color-white);
+  border: var(--border-thick);
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-soft);
+  padding: 0.5rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: var(--transition);
+}
+
+.navbar-logo {
+  height: 40px;
+  mix-blend-mode: multiply;
+  cursor: pointer;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+.navbar-link {
+  text-decoration: none;
+  color: var(--color-primary);
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  font-size: 0.9rem;
+  transition: var(--transition);
+}
+
+.navbar-link:hover {
+  color: var(--color-accent-red);
+}
+
+@media (max-width: 600px) {
+  .navbar {
+    padding: 0.5rem 1rem;
+    margin: 0 10px 15px;
+  }
+  .navbar-links {
+    gap: 0.8rem;
+  }
+  .navbar-link {
+    font-size: 0.8rem;
+  }
+}
