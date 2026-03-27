@@ -1,23 +1,42 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Auth from "./pages/Auth";
+import useAuthStore from "./store/authStore";
 
 // Placeholder components
-const Auth = () => <div style={{ padding: "2rem", textAlign: "center" }}><h2>Helper Login / Signup</h2></div>;
 const Home = () => <div style={{ padding: "2rem", textAlign: "center" }}><h2>Available Gigs Map / List</h2></div>;
 const TaskDetail = () => <div style={{ padding: "2rem", textAlign: "center" }}><h2>Task Details & Apply</h2></div>;
 const ActiveGigs = () => <div style={{ padding: "2rem", textAlign: "center" }}><h2>My Accepted Gigs</h2></div>;
 const Chat = () => <div style={{ padding: "2rem", textAlign: "center" }}><h2>Chat with Client</h2></div>;
 
 export default function App() {
-  const isAuthenticated = false; // To be integrated with supabase auth state
+  const { isAuthenticated, initialize, isLoading, logout } = useAuthStore();
+
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
+
+  if (isLoading) {
+    return (
+      <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <p>Loading Helper App...</p>
+      </div>
+    );
+  }
 
   return (
     <Router>
-      <nav style={{ padding: "1rem", background: "#f5f5f5", display: "flex", gap: "1rem" }}>
-        <strong>GigB Helper</strong>
-        <a href="/">Home</a>
-        <a href="/active">Active Gigs</a>
-      </nav>
+      {isAuthenticated && (
+        <nav style={{ padding: "1rem", background: "#f5f5f5", display: "flex", gap: "1rem", alignItems: "center" }}>
+          <strong>GigB Helper Dashboard</strong>
+          <a href="/">Find Gigs</a>
+          <a href="/active">My Gigs</a>
+          <button onClick={logout} style={{ marginLeft: "auto", cursor: "pointer", padding: "0.5rem", borderRadius: "8px", border: "1px solid red", color: "red", background: "white" }}>
+            Logout
+          </button>
+        </nav>
+      )}
+      
       <Routes>
         <Route 
           path="/auth" 
