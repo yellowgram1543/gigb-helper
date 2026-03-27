@@ -3,11 +3,9 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-d
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
 import TaskDetail from "./pages/TaskDetail";
+import ActiveGigs from "./pages/ActiveGigs";
+import Chat from "./pages/Chat";
 import useAuthStore from "./store/authStore";
-
-// Placeholder components
-const ActiveGigs = () => <div style={{ padding: "2rem", textAlign: "center" }}><h2>My Accepted Gigs</h2></div>;
-const Chat = () => <div style={{ padding: "2rem", textAlign: "center" }}><h2>Chat with Client</h2></div>;
 
 export default function App() {
   const { isAuthenticated, initialize, isLoading, logout } = useAuthStore();
