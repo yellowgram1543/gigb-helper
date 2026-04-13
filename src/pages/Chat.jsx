@@ -28,7 +28,9 @@ export default function Chat() {
   };
 
   useEffect(() => {
-    socket.emit("join_room", id);
+    if (!user) return;
+
+    socket.emit("join_room", { taskId: id, userId: user.id });
 
     const fetchHistory = async () => {
       try {
@@ -44,10 +46,15 @@ export default function Chat() {
       setMessages((prev) => [...prev, data]);
     });
 
+    socket.on("error", (e) => {
+      console.error("Socket error:", e.message);
+    });
+
     return () => {
       socket.off("receive_message");
+      socket.off("error");
     };
-  }, [id]);
+  }, [id, user]);
 
   useEffect(() => {
     scrollToBottom();
@@ -55,18 +62,29 @@ export default function Chat() {
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (!inputText.trim()) return;
+    if (!inputText.trim() || !user) return;
 
     const messageData = {
       taskId: id,
-      sender: user?.id || "anonymous",
-      senderName: user?.user_metadata?.full_name || "HELPER",
-      text: inputText
+      senderId: user.id,
+      senderName: user.user_metadata?.full_name || "HELPER",
+      content: inputText
     };
 
     socket.emit("send_message", messageData);
     setInputText("");
   };
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-[calc(100vh-140px)]">
+        <div className="card-neo bg-error-container p-8 text-center">
+           <h2 className="text-2xl uppercase mb-2">Access Denied</h2>
+           <p className="font-headline font-black uppercase text-xs">You must be logged in.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col h-[calc(100vh-140px)] max-w-2xl mx-auto neo-border bg-surface-container shadow-[8px_8px_0px_0px_rgba(48,52,44,1)] overflow-hidden">
