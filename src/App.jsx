@@ -5,10 +5,11 @@ import Home from "./pages/Home";
 import TaskDetail from "./pages/TaskDetail";
 import ActiveGigs from "./pages/ActiveGigs";
 import Chat from "./pages/Chat";
+import Navbar from "./components/Navbar";
 import useAuthStore from "./store/authStore";
 
 export default function App() {
-  const { isAuthenticated, initialize, isLoading, logout } = useAuthStore();
+  const { isAuthenticated, initialize, isLoading } = useAuthStore();
 
   useEffect(() => {
     initialize();
@@ -16,48 +17,43 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div style={{ height: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <p>Loading Helper App...</p>
+      <div className="h-screen flex flex-col items-center justify-center gap-4 bg-surface">
+        <div className="loader border-[5px] border-on-surface border-b-transparent rounded-full w-12 h-12 animate-spin"></div>
+        <p className="font-headline font-black uppercase tracking-tighter text-secondary">Analyzing Opportunities...</p>
       </div>
     );
   }
 
   return (
     <Router>
-      {isAuthenticated && (
-        <nav style={{ padding: "1rem", background: "#f5f5f5", display: "flex", gap: "1rem", alignItems: "center" }}>
-          <strong>GigB Helper Dashboard</strong>
-          <a href="/">Find Gigs</a>
-          <a href="/active">My Gigs</a>
-          <button onClick={logout} style={{ marginLeft: "auto", cursor: "pointer", padding: "0.5rem", borderRadius: "8px", border: "1px solid red", color: "red", background: "white" }}>
-            Logout
-          </button>
-        </nav>
-      )}
-      
-      <Routes>
-        <Route 
-          path="/auth" 
-          element={isAuthenticated ? <Navigate to="/" /> : <Auth />} 
-        />
-        <Route 
-          path="/" 
-          element={isAuthenticated ? <Home /> : <Navigate to="/auth" />} 
-        />
-        <Route 
-          path="/task/:id" 
-          element={isAuthenticated ? <TaskDetail /> : <Navigate to="/auth" />} 
-        />
-        <Route 
-          path="/active" 
-          element={isAuthenticated ? <ActiveGigs /> : <Navigate to="/auth" />} 
-        />
-        <Route 
-          path="/chat/:id" 
-          element={isAuthenticated ? <Chat /> : <Navigate to="/auth" />} 
-        />
-        <Route path="*" element={<Navigate to="/auth" />} />
-      </Routes>
+      <div className="flex flex-col md:flex-row min-h-screen bg-surface">
+        <Navbar />
+        <main className="flex-grow p-4 md:p-8 md:ml-64 mb-20 md:mb-0">
+          <Routes>
+            <Route 
+              path="/auth" 
+              element={isAuthenticated ? <Navigate to="/" /> : <Auth />} 
+            />
+            <Route 
+              path="/" 
+              element={isAuthenticated ? <Home /> : <Navigate to="/auth" />} 
+            />
+            <Route 
+              path="/task/:id" 
+              element={isAuthenticated ? <TaskDetail /> : <Navigate to="/auth" />} 
+            />
+            <Route 
+              path="/active" 
+              element={isAuthenticated ? <ActiveGigs /> : <Navigate to="/auth" />} 
+            />
+            <Route 
+              path="/chat/:id" 
+              element={isAuthenticated ? <Chat /> : <Navigate to="/auth" />} 
+            />
+            <Route path="*" element={<Navigate to="/auth" />} />
+          </Routes>
+        </main>
+      </div>
     </Router>
   );
 }

@@ -33,146 +33,114 @@ export default function TaskDetail() {
         status: "ASSIGNED",
         helper: {
           name: user?.user_metadata?.full_name || "Verified Helper",
-          rating: "5.0", // Hardcoded rating for MVP
+          rating: "5.0",
           reviews: 1
         }
       });
-      // Task accepted successfully! Redirect them to their active gigs (or chat).
       navigate("/active");
     } catch (err) {
       console.error("Error accepting task:", err);
-      alert("Failed to accept this gig. Someone else may have grabbed it!");
+      alert("Deployment failed. Coordinate conflict.");
       setIsAccepting(false);
     }
   };
 
   if (loading) {
     return (
-      <main style={{ padding: "40px", textAlign: "center" }}>
-        <h2 style={{ color: "#6b7280" }}>Loading gig details...</h2>
-      </main>
+      <div className="flex justify-center py-40">
+        <div className="loader border-[6px] border-on-surface border-b-transparent rounded-full w-16 h-16 animate-spin"></div>
+      </div>
     );
   }
 
   if (!task) {
     return (
-      <main style={{ padding: "40px", textAlign: "center" }}>
-        <h2>Job not found!</h2>
-        <button className="btn btn-secondary" onClick={() => navigate("/")}>Go Back</button>
-      </main>
+      <div className="max-w-2xl mx-auto py-20 text-center">
+        <h1 className="text-4xl uppercase opacity-40">Mission Not Found</h1>
+        <button className="btn-neo-secondary mt-8 bg-secondary-container" onClick={() => navigate("/")}>RETURN TO GRID</button>
+      </div>
     );
   }
 
   return (
-    <main style={{ padding: "20px 20px 80px", maxWidth: "800px", margin: "0 auto" }}>
+    <div className="max-w-3xl mx-auto space-y-12 pb-32">
       <button 
         onClick={() => navigate(-1)} 
-        style={{ background: "none", border: "none", color: "#4b5563", fontWeight: "bold", cursor: "pointer", marginBottom: "1rem", display: "flex", gap: "5px", alignItems: "center" }}
+        className="flex items-center gap-2 font-headline font-black uppercase text-xs opacity-60 hover:opacity-100 transition-opacity"
       >
-        ← Back to Map
+        <span className="material-symbols-outlined text-sm">arrow_back</span>
+        Back to Local Grid
       </button>
 
-      <div className="card" style={{ 
-        background: "white", 
-        borderRadius: "16px", 
-        padding: "2rem", 
-        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-        borderTop: "8px solid #2563eb"
-      }}>
+      <div className="card-neo bg-surface-container-lowest relative overflow-visible">
+        <div className="absolute -top-4 -right-4 badge-neo bg-secondary-container px-6 py-2 text-sm shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] uppercase">
+          {task.status}
+        </div>
         
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1.5rem" }}>
+        <header className="mb-8 pb-8 border-b-[3px] border-on-surface border-dashed">
+          <h1 className="text-5xl md:text-6xl uppercase leading-none mb-4">{task.title}</h1>
+          <div className="flex items-center gap-4">
+             <span className="font-headline font-black text-xs uppercase opacity-50 tracking-widest text-secondary">Task Code: {task._id.slice(-8)}</span>
+             <div className="neo-border bg-secondary-container px-3 py-0.5 font-headline font-black text-xl shadow-[2px_2px_0px_0px_rgba(48,52,44,1)]">
+                ₹{task.budget}
+             </div>
+          </div>
+        </header>
+        
+        <div className="space-y-10">
           <div>
-            <span style={{ 
-              background: task.status === "OPEN" ? "#dcfce7" : "#f1f5f9",
-              color: task.status === "OPEN" ? "#166534" : "#475569",
-              padding: "4px 12px", 
-              borderRadius: "20px", 
-              fontWeight: 800, 
-              fontSize: "0.8rem",
-              textTransform: "uppercase",
-              letterSpacing: "1px"
-            }}>
-              {task.status}
-            </span>
-            <h1 style={{ marginTop: "1rem", marginBottom: "0", fontSize: "2.2rem", color: "#111827", lineHeight: "1.2" }}>
-              {task.title}
-            </h1>
+            <label className="font-headline font-black text-[10px] uppercase tracking-[0.3em] opacity-50 mb-4 block">MISSION OBJECTIVE</label>
+            <p className="font-body text-xl leading-relaxed text-on-surface whitespace-pre-wrap">
+              {task.description}
+            </p>
           </div>
-          <div style={{ textAlign: "right", background: "#f8fafc", padding: "1rem", borderRadius: "12px", border: "2px solid #e2e8f0" }}>
-            <p style={{ margin: 0, fontSize: "0.85rem", color: "#64748b", fontWeight: "bold" }}>PAYOUT</p>
-            <p style={{ margin: 0, fontSize: "2rem", fontWeight: 900, color: "#16a34a" }}>₹{task.budget}</p>
+          
+          {task.imageUrl && (
+            <div className="neo-border shadow-[8px_8px_0px_0px_rgba(48,52,44,1)] overflow-hidden bg-surface-container">
+              <img src={task.imageUrl} alt={task.title} className="w-full h-auto grayscale hover:grayscale-0 transition-all duration-500" />
+            </div>
+          )}
+          
+          <div className="card-neo bg-surface-container relative overflow-visible mt-8">
+            <div className="absolute -top-3 -left-3 badge-neo bg-surface-container-lowest">TARGET ZONE</div>
+            <p className="font-headline font-black text-lg uppercase leading-tight">📍 {task.address}</p>
           </div>
         </div>
-        
-        <div style={{ marginBottom: "2rem" }}>
-          <h3 style={{ color: "#475569", fontSize: "1rem", marginBottom: "0.5rem", textTransform: "uppercase" }}>Job Description</h3>
-          <p style={{ fontSize: "1.1rem", lineHeight: "1.6", color: "#334155", whiteSpace: "pre-wrap" }}>
-            {task.description}
-          </p>
-        </div>
-        
-        {task.imageUrl && (
-          <div style={{ marginBottom: "2rem", borderRadius: "12px", overflow: "hidden", border: "2px solid #e2e8f0", maxHeight: "400px", display: "flex", justifyContent: "center", background: "#f8fafc" }}>
-            <img src={task.imageUrl} alt={task.title} style={{ maxWidth: "100%", height: "auto", objectFit: "contain" }} />
-          </div>
-        )}
-        
-        <div style={{ background: "#f8fafc", padding: "1.5rem", borderRadius: "12px", marginBottom: "2rem", border: "1px solid #e2e8f0" }}>
-          <h3 style={{ color: "#475569", fontSize: "0.9rem", margin: "0 0 5px 0", textTransform: "uppercase" }}>Location</h3>
-          <p style={{ fontWeight: 700, margin: 0, fontSize: "1.1rem", color: "#0f172a" }}>📍 {task.address}</p>
-        </div>
-
       </div>
 
-      {/* FLOATING ACTION BAR FOR ACCEPTING */}
+      {/* FLOATING ACTION BAR */}
       {task.status === "OPEN" ? (
-        <div style={{
-          position: "fixed",
-          bottom: 0,
-          left: 0,
-          right: 0,
-          background: "white",
-          padding: "20px",
-          boxShadow: "0 -4px 10px rgba(0,0,0,0.05)",
-          display: "flex",
-          justifyContent: "center",
-          gap: "20px",
-          zIndex: 100,
-          borderTop: "1px solid #e2e8f0"
-        }}>
-          <button 
-            className="btn btn-secondary" 
-            style={{ padding: "15px 30px", fontSize: "1.1rem", borderRadius: "12px", fontWeight: "bold" }}
-            onClick={() => navigate("/")}
-          >
-            Not Interested
-          </button>
-          
-          <button 
-            className="btn btn-primary" 
-            style={{ 
-              padding: "15px 40px", 
-              fontSize: "1.1rem", 
-              borderRadius: "12px", 
-              background: "#2563eb", 
-              color: "white",
-              border: "none",
-              fontWeight: "bold",
-              cursor: isAccepting ? "not-allowed" : "pointer",
-              boxShadow: "0 4px 6px rgba(37, 99, 235, 0.3)"
-            }}
-            onClick={handleAcceptGig}
-            disabled={isAccepting}
-          >
-            {isAccepting ? "Accepting..." : "✓ Accept & Claim Gig"}
-          </button>
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-50">
+          <div className="card-neo bg-surface-container-lowest flex flex-col sm:flex-row items-center gap-6 p-6 shadow-[12px_12px_0px_0px_rgba(48,52,44,1)] border-4">
+            <div className="text-center sm:text-left flex-1">
+               <p className="font-headline font-black text-[10px] uppercase opacity-50 mb-1 tracking-widest">READY FOR DEPLOYMENT?</p>
+               <h3 className="text-2xl font-black uppercase m-0">Claim for ₹{task.budget}</h3>
+            </div>
+            
+            <div className="flex gap-4 w-full sm:w-auto">
+              <button 
+                className="btn-neo bg-tertiary-container flex-1 sm:flex-none text-xs" 
+                onClick={() => navigate("/")}
+              >
+                ABORT
+              </button>
+              
+              <button 
+                className={`btn-neo bg-secondary-container flex-[2] sm:flex-none py-4 px-8 text-lg font-black ${isAccepting ? 'animate-pulse' : ''}`}
+                onClick={handleAcceptGig}
+                disabled={isAccepting}
+              >
+                {isAccepting ? "INITIALIZING..." : "ACCEPT MISSION →"}
+              </button>
+            </div>
+          </div>
         </div>
       ) : (
-        <div style={{ textAlign: "center", padding: "2rem", marginTop: "2rem", background: "#f1f5f9", borderRadius: "12px", border: "1px solid #cbd5e1" }}>
-          <h3 style={{ margin: 0, color: "#475569" }}>This job is no longer available.</h3>
-          <p style={{ margin: "5px 0 0 0", color: "#64748b" }}>Status: {task.status}</p>
+        <div className="card-neo text-center py-12 bg-surface-container border-dashed border-4">
+          <h3 className="text-2xl uppercase opacity-50 italic">Deployment Restricted: {task.status}</h3>
+          <p className="font-headline font-black text-[10px] uppercase tracking-[0.2em] mt-2">This opportunity has been claimed or closed.</p>
         </div>
       )}
-    </main>
+    </div>
   );
 }

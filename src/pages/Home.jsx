@@ -15,7 +15,6 @@ export default function Home() {
     const fetchOpenTasks = async () => {
       try {
         const response = await api.get("/tasks");
-        // We only want gigs that are OPEN and nobody has accepted yet!
         const openGigs = response.data.filter(task => task.status === "OPEN");
         setTasks(openGigs);
       } catch (err) {
@@ -28,94 +27,84 @@ export default function Home() {
   }, []);
 
   return (
-    <main style={{ padding: "0 20px 40px", maxWidth: "1400px", margin: "0 auto" }}>
-      <header style={{ padding: "2rem 0", marginBottom: "1rem", borderBottom: "2px solid #e5e7eb" }}>
-        <h1 style={{ marginBottom: "0.2rem", color: "#111827", fontSize: "2rem" }}>
-          Find Local Gigs
-        </h1>
-        <p style={{ fontWeight: 600, color: "#6b7280" }}>
-          {loading ? "Scanning your neighborhood..." : `Found ${tasks.length} open jobs waiting for you.`}
-        </p>
+    <div className="max-w-7xl mx-auto space-y-12">
+      {/* Hero / Discovery Header */}
+      <header className="card-neo bg-secondary-container relative overflow-visible">
+         <div className="absolute -top-4 -right-4 badge-neo bg-primary-container px-4 py-2 text-sm">
+            DISCOVERY MODE
+         </div>
+         <h1 className="text-5xl md:text-7xl mb-4 uppercase">Find Local Gigs 📍</h1>
+         <p className="font-headline font-bold text-xl uppercase tracking-tight opacity-80">
+           {loading ? "Scanning the Grid..." : `Spotted ${tasks.length} opportunities in your perimeter.`}
+         </p>
       </header>
 
       {loading ? (
-        <div style={{ textAlign: "center", padding: "5rem" }}>
-          <h2 style={{ color: "#6b7280" }}>Loading nearby gigs...</h2>
+        <div className="flex justify-center py-20">
+           <div className="loader border-[6px] border-on-surface border-b-transparent rounded-full w-16 h-16 animate-spin"></div>
         </div>
       ) : tasks.length === 0 ? (
-        <div style={{ textAlign: "center", padding: "5rem", background: "#f3f4f6", borderRadius: "12px", border: "2px dashed #d1d5db" }}>
-          <h2 style={{ color: "#374151" }}>No open gigs nearby!</h2>
-          <p style={{ color: "#6b7280" }}>Check back later or expand your search area.</p>
+        <div className="card-neo text-center py-20 bg-surface-container border-dashed border-4">
+          <p className="text-2xl font-headline font-black uppercase mb-8 opacity-60">Zero signals detected. Relocate and retry.</p>
         </div>
       ) : (
-        <div style={{ 
-          display: "grid", 
-          gridTemplateColumns: "1fr 1fr", 
-          gap: "24px",
-          alignItems: "start"
-        }}>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           
-          {/* LEFT PANE: SCROLLABLE LIST OF GIGS */}
-          <section style={{ display: "flex", flexDirection: "column", gap: "16px", maxHeight: "75vh", overflowY: "auto", paddingRight: "10px" }}>
+          {/* GIG LIST */}
+          <section className="lg:col-span-6 space-y-8 max-h-[75vh] overflow-y-auto pr-4 custom-scrollbar">
             {tasks.map((task, index) => (
               <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
                 key={task._id} 
-                className="card" 
-                style={{ 
-                  background: "#ffffff", 
-                  padding: "1.5rem", 
-                  borderRadius: "12px", 
-                  boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)",
-                  cursor: "pointer",
-                  borderLeft: "6px solid #2563eb",
-                  transition: "transform 0.2s"
-                }}
+                className="card-neo flex flex-col justify-between cursor-pointer min-h-[250px] hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[12px_12px_0px_0px_rgba(48,52,44,1)] neo-interactive"
                 onClick={() => navigate(`/task/${task._id}`)}
-                onMouseEnter={(e) => e.currentTarget.style.transform = "translateY(-4px)"}
-                onMouseLeave={(e) => e.currentTarget.style.transform = "translateY(0)"}
               >
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "0.5rem" }}>
-                  <h3 style={{ margin: "0", fontSize: "1.25rem", color: "#111827", lineHeight: "1.4" }}>
-                    {task.title}
-                  </h3>
-                  <div style={{ background: "#dbeafe", color: "#1d4ed8", padding: "4px 12px", borderRadius: "20px", fontWeight: "bold", fontSize: "1.1rem" }}>
-                    ₹{task.budget}
+                <div>
+                  <div className="flex justify-between items-start mb-6">
+                    <div className="neo-border bg-surface-container-lowest px-4 py-1 font-headline font-black text-xl shadow-[4px_4px_0px_0px_rgba(48,52,44,1)]">
+                      ₹{task.budget}
+                    </div>
+                    <span className="badge-neo bg-tertiary-container">
+                      {task.category || 'GENERAL'}
+                    </span>
                   </div>
+                  <h3 className="text-3xl mb-4 leading-none uppercase">{task.title}</h3>
+                  <div className="flex items-center gap-2 mb-4 font-headline font-bold text-xs uppercase opacity-60">
+                    <span className="material-symbols-outlined text-sm text-secondary">location_on</span>
+                    {task.address}
+                  </div>
+                  <p className="font-body text-on-surface opacity-80 line-clamp-2">
+                    {task.description}
+                  </p>
                 </div>
                 
-                <div style={{ display: "flex", gap: "5px", alignItems: "center", marginBottom: "1rem", color: "#6b7280", fontSize: "0.9rem", fontWeight: "600" }}>
-                  📍 {task.address}
-                </div>
-                
-                <p style={{ margin: "0 0 1rem 0", color: "#4b5563", fontSize: "0.95rem", display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>
-                  {task.description}
-                </p>
-
-                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                <div className="mt-8 pt-6 border-t-[3px] border-on-surface border-dashed flex justify-end">
                   <button 
-                    style={{ background: "#2563eb", color: "#ffffff", padding: "8px 16px", borderRadius: "8px", border: "none", fontWeight: "bold", cursor: "pointer" }}
+                    className="btn-neo bg-primary-container text-xs px-4 py-2"
                     onClick={(e) => {
-                      e.stopPropagation(); // Prevents the card click from overriding the button
+                      e.stopPropagation();
                       navigate(`/task/${task._id}`);
                     }}
                   >
-                    View & Apply
+                    APPLY NOW →
                   </button>
                 </div>
               </motion.div>
             ))}
           </section>
 
-          {/* RIGHT PANE: MAP VIEW */}
-          <aside style={{ height: "75vh", position: "sticky", top: "20px" }}>
-            <TaskMap tasks={tasks} />
+          {/* MAP VIEW */}
+          <aside className="lg:col-span-6 h-[75vh] sticky top-8 card-neo p-0 overflow-hidden bg-surface-container shadow-[12px_12px_0px_0px_rgba(48,52,44,1)]">
+             <div className="absolute top-4 left-4 z-[400] badge-neo bg-surface-container-lowest py-2 px-4 shadow-[4px_4px_0px_0px_rgba(48,52,44,1)]">
+                LIVE GRID VIEW
+             </div>
+             <TaskMap tasks={tasks} />
           </aside>
           
         </div>
       )}
-    </main>
+    </div>
   );
 }

@@ -1,204 +1,77 @@
-/* 1. Color System & Variables */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800;900&family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+
 :root {
-  --color-primary: #003366;      /* Dark Blue: Main text/headings */
-  --color-accent-red: #E63946;   /* Red: Danger/Action */
-  --color-accent-pink: #FF85A1;  /* Pink: Secondary Action */
-  --color-peach: #FFD1B3;        /* Peach: Warm surfaces */
-  --color-cream: #FFFDF5;        /* Cream: Cards/Inputs */
-  --color-bg-light: #E0F2FE;     /* Light Blue: Page Background */
-  
-  --color-text: #001F3F;         /* Very Dark Blue */
-  --color-white: #FFFFFF;
-  
-  --border-thick: 3px solid var(--color-text);
-  --radius-pill: 50px;
-  --radius-soft: 20px;
-  
-  --shadow-soft: 0 6px 0 rgba(0, 31, 63, 0.15);
-  --shadow-hover: 0 10px 0 rgba(0, 31, 63, 0.2);
-  
-  --transition: all 0.25s ease-in-out;
-}
-
-/* 2. Global Resets & Typography */
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap');
-
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  --color-on-surface: #30342c;
+  --border-weight: 3px;
 }
 
 body {
-  font-family: 'Open Sans', sans-serif;
-  color: var(--color-text);
-  background: var(--color-bg-light);
-  min-height: 100vh;
-  overflow-x: hidden;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
+  @apply font-body bg-surface text-on-surface min-h-screen;
 }
 
-/* 3. Signature Background: Light Blue Pastel */
-body::before {
-  content: "";
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: -2;
-  background: var(--color-bg-light);
-  filter: none;
+h1, h2, h3, h4, h5, h6 {
+  @apply font-headline font-black tracking-tighter;
 }
 
-/* 4. Core Component Styles */
-
-/* 4.1 Cards */
-.card {
-  background: var(--color-cream);
-  border: var(--border-thick);
-  border-radius: var(--radius-soft);
-  padding: 1.5rem;
-  box-shadow: var(--shadow-soft);
-  transition: var(--transition);
+/* Neo-Brutalist Layout Utilities */
+.neo-border {
+  border: var(--border-weight) solid var(--color-on-surface);
 }
 
-.card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-hover);
+.neo-shadow {
+  box-shadow: 4px 4px 0px 0px var(--color-on-surface);
 }
 
-/* 4.2 Buttons */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.8rem 1.8rem;
-  font-weight: 700;
-  border: var(--border-thick);
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-  transition: var(--transition);
-  text-decoration: none;
-  font-family: 'Nunito', sans-serif;
+.neo-shadow-lg {
+  box-shadow: 8px 8px 0px 0px var(--color-on-surface);
 }
 
-.btn:active {
-  transform: scale(0.96);
+.neo-interactive {
+  @apply transition-all duration-150;
 }
 
-.btn-primary {
-  background: var(--color-accent-pink);
-  color: var(--color-text);
+.neo-interactive:active {
+  @apply translate-x-[2px] translate-y-[2px] shadow-none;
 }
 
-.btn-primary:hover {
-  background: var(--color-peach);
+/* Custom Components based on Stitch Design */
+.btn-neo {
+  @apply neo-border neo-shadow neo-interactive font-headline font-bold uppercase tracking-tighter px-6 py-3 inline-flex items-center justify-center;
 }
 
-.btn-secondary {
-  background: var(--color-accent-red);
-  color: white;
+.btn-neo-primary {
+  @apply btn-neo bg-primary-container text-on-surface;
 }
 
-/* 4.3 Input Fields */
-input, textarea {
-  width: 100%;
-  padding: 1rem;
-  border: var(--border-thick);
-  border-radius: var(--radius-soft);
-  font-family: 'Open Sans', sans-serif;
-  font-size: 1rem;
-  transition: var(--transition);
-  outline: none;
-  background: var(--color-white);
+.btn-neo-secondary {
+  @apply btn-neo bg-secondary-container text-on-surface;
 }
 
-input:focus {
-  border-color: var(--color-primary);
-  background: var(--color-cream);
+.btn-neo-tertiary {
+  @apply btn-neo bg-tertiary-container text-on-surface;
 }
 
-/* 5. Utility Typography */
-h1, h2, h3, h4 {
-  font-family: 'Nunito', sans-serif;
-  font-weight: 900;
-  letter-spacing: -0.01em;
-  margin-bottom: 1rem;
-  color: var(--color-primary);
+.card-neo {
+  @apply neo-border neo-shadow bg-surface-container-lowest p-6;
 }
 
-.text-small { font-size: 0.875rem; font-weight: 700; }
-
-/* 6. Loader Animation */
-.loader {
-  width: 48px;
-  height: 48px;
-  border: 5px solid var(--color-peach);
-  border-bottom-color: var(--color-primary);
-  border-radius: 50%;
-  display: inline-block;
-  box-sizing: border-box;
-  animation: rotation 1s linear infinite;
+.input-neo {
+  @apply neo-border bg-surface-container-lowest p-4 outline-none focus:neo-shadow-lg focus:-translate-x-1 focus:-translate-y-1 neo-interactive;
 }
 
-@keyframes rotation {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+.badge-neo {
+  @apply neo-border font-headline font-bold uppercase text-[10px] px-2 py-1 bg-surface-container-lowest shadow-[2px_2px_0px_0px_rgba(48,52,44,1)];
 }
 
-/* 7. Navbar Styles */
-.navbar {
-  position: sticky;
-  top: 20px;
-  z-index: 1000;
-  margin: 0 20px 40px;
-  background: var(--color-white);
-  border: var(--border-thick);
-  border-radius: var(--radius-pill);
-  box-shadow: var(--shadow-soft);
-  padding: 0.5rem 1.5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: var(--transition);
+/* Nav Styles */
+.nav-item {
+  @apply flex items-center gap-4 p-4 font-headline font-bold uppercase tracking-tighter border-b-[3px] border-on-surface neo-interactive hover:bg-surface-container;
 }
 
-.navbar-logo {
-  height: 40px;
-  mix-blend-mode: multiply;
-  cursor: pointer;
-}
-
-.navbar-links {
-  display: flex;
-  gap: 1.5rem;
-  align-items: center;
-}
-
-.navbar-link {
-  text-decoration: none;
-  color: var(--color-primary);
-  font-family: 'Nunito', sans-serif;
-  font-weight: 800;
-  font-size: 0.9rem;
-  transition: var(--transition);
-}
-
-.navbar-link:hover {
-  color: var(--color-accent-red);
-}
-
-@media (max-width: 600px) {
-  .navbar {
-    padding: 0.5rem 1rem;
-    margin: 0 10px 15px;
-  }
-  .navbar-links {
-    gap: 0.8rem;
-  }
-  .navbar-link {
-    font-size: 0.8rem;
-  }
+.nav-item-active {
+  @apply bg-primary-container;
 }
