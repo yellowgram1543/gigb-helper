@@ -11,12 +11,16 @@
 
 @layer base {
   body {
-    @apply font-body bg-surface text-on-surface min-h-screen;
+    @apply font-body bg-surface text-on-surface min-h-screen text-sm;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-headline font-black tracking-tighter;
+    @apply font-headline font-black tracking-tighter uppercase;
   }
+  
+  h1 { @apply text-3xl; }
+  h2 { @apply text-2xl; }
+  h3 { @apply text-xl; }
 }
 
 @layer utilities {
@@ -42,9 +46,15 @@
 }
 
 @layer components {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
   /* Custom Components based on Stitch Design */
   .btn-neo {
-    @apply neo-border neo-shadow neo-interactive font-headline font-bold uppercase tracking-tighter px-6 py-3 inline-flex items-center justify-center;
+    @apply neo-border neo-shadow neo-interactive font-headline font-bold uppercase tracking-tighter px-4 py-2 inline-flex items-center justify-center gap-2 text-xs;
   }
 
   .btn-neo-primary {
@@ -60,11 +70,11 @@
   }
 
   .card-neo {
-    @apply neo-border neo-shadow bg-surface-container-lowest p-6;
+    @apply neo-border neo-shadow bg-surface-container-lowest p-4;
   }
 
   .input-neo {
-    @apply neo-border bg-surface-container-lowest p-4 outline-none neo-interactive;
+    @apply neo-border bg-surface-container-lowest p-3 outline-none neo-interactive text-xs uppercase font-bold;
   }
   
   .input-neo:focus {
@@ -72,12 +82,12 @@
   }
 
   .badge-neo {
-    @apply neo-border font-headline font-bold uppercase text-[10px] px-2 py-1 bg-surface-container-lowest shadow-[2px_2px_0px_0px_rgba(48,52,44,1)];
+    @apply neo-border font-headline font-bold uppercase text-[9px] px-2 py-0.5 bg-surface-container-lowest shadow-[2px_2px_0px_0px_rgba(48,52,44,1)];
   }
 
   /* Nav Styles */
   .nav-item {
-    @apply flex items-center gap-4 p-4 font-headline font-bold uppercase tracking-tighter border-b-[3px] border-on-surface neo-interactive hover:bg-surface-container;
+    @apply flex items-center gap-4 p-4 font-headline font-bold uppercase tracking-tighter border-b-[3px] border-on-surface neo-interactive hover:bg-surface-container text-xs;
   }
 
   .nav-item-active {

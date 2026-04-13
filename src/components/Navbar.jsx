@@ -22,24 +22,24 @@ export default function Navbar() {
   return (
     <>
       {/* Sidebar for Desktop */}
-      <aside className="fixed left-0 top-0 h-full flex flex-col p-6 w-64 border-r-[3px] border-on-surface bg-surface shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] z-50 hidden md:flex">
-        <div className="mb-12 cursor-pointer" onClick={() => navigate("/")}>
-          <h1 className="text-3xl font-black text-on-surface italic tracking-tighter font-headline">GigB</h1>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-secondary opacity-70">Helper Force</p>
+      <aside className="fixed left-0 top-0 h-full flex flex-col p-6 w-60 border-r-[3px] border-on-surface bg-surface shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] z-50 hidden md:flex">
+        <div className="mb-10 cursor-pointer" onClick={() => navigate("/")}>
+          <h1 className="text-4xl font-black text-on-surface italic tracking-tighter leading-none mb-1">GigB</h1>
+          <p className="text-[9px] font-bold uppercase tracking-widest text-secondary opacity-70">Helper Force</p>
         </div>
 
-        <nav className="flex flex-col gap-4 flex-grow">
+        <nav className="flex flex-col gap-3 flex-grow">
           {navItems.map((item) => (
             <Link
               key={item.path}
               to={item.path}
-              className={`flex items-center gap-4 p-4 font-headline font-bold uppercase tracking-tighter border-[3px] border-on-surface neo-interactive ${
+              className={`flex items-center gap-3 p-3 font-headline font-bold uppercase tracking-tighter border-[3px] border-on-surface neo-interactive text-xs ${
                 location.pathname === item.path
                   ? "bg-secondary-container shadow-[2px_2px_0px_0px_rgba(48,52,44,1)]"
                   : "bg-surface-container-lowest hover:bg-surface-container shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] hover:shadow-[2px_2px_0px_0px_rgba(48,52,44,1)]"
               }`}
             >
-              <span className="material-symbols-outlined">{item.icon}</span>
+              <span className="material-symbols-outlined text-lg">{item.icon}</span>
               {item.name}
             </Link>
           ))}
@@ -47,9 +47,9 @@ export default function Navbar() {
 
         <button
           onClick={handleLogout}
-          className="mt-auto flex items-center gap-4 p-4 font-headline font-bold uppercase tracking-tighter bg-error-container text-on-surface border-[3px] border-on-surface shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] neo-interactive"
+          className="mt-auto flex items-center gap-3 p-3 font-headline font-bold uppercase tracking-tighter bg-error-container text-on-surface border-[3px] border-on-surface shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] neo-interactive text-xs"
         >
-          <span className="material-symbols-outlined">logout</span>
+          <span className="material-symbols-outlined text-lg">logout</span>
           Logout
         </button>
       </aside>
@@ -68,10 +68,10 @@ export default function Navbar() {
           <Link
             key={item.path}
             to={item.path}
-            className={`flex flex-col items-center p-2 ${location.pathname === item.path ? 'bg-secondary-container border-[2px] border-on-surface' : ''}`}
+            className={`flex flex-col items-center p-2 rounded-sm ${location.pathname === item.path ? 'bg-secondary-container border-[2px] border-on-surface shadow-[2px_2px_0px_0px_rgba(48,52,44,1)]' : ''}`}
           >
-            <span className="material-symbols-outlined">{item.icon}</span>
-            <span className="text-[10px] font-bold uppercase">{item.name}</span>
+            <span className="material-symbols-outlined text-lg">{item.icon}</span>
+            <span className="text-[8px] font-bold uppercase tracking-tighter mt-0.5">{item.name.split(' ')[0]}</span>
           </Link>
         ))}
       </nav>
