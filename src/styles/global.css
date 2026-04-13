@@ -9,69 +9,78 @@
   --border-weight: 3px;
 }
 
-body {
-  @apply font-body bg-surface text-on-surface min-h-screen;
+@layer base {
+  body {
+    @apply font-body bg-surface text-on-surface min-h-screen;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-headline font-black tracking-tighter;
+  }
 }
 
-h1, h2, h3, h4, h5, h6 {
-  @apply font-headline font-black tracking-tighter;
+@layer utilities {
+  .neo-border {
+    border: var(--border-weight) solid var(--color-on-surface);
+  }
+
+  .neo-shadow {
+    box-shadow: 4px 4px 0px 0px var(--color-on-surface);
+  }
+
+  .neo-shadow-lg {
+    box-shadow: 8px 8px 0px 0px var(--color-on-surface);
+  }
+
+  .neo-interactive {
+    @apply transition-all duration-150;
+  }
+
+  .neo-interactive:active {
+    @apply translate-x-[2px] translate-y-[2px] shadow-none;
+  }
 }
 
-/* Neo-Brutalist Layout Utilities */
-.neo-border {
-  border: var(--border-weight) solid var(--color-on-surface);
-}
+@layer components {
+  /* Custom Components based on Stitch Design */
+  .btn-neo {
+    @apply neo-border neo-shadow neo-interactive font-headline font-bold uppercase tracking-tighter px-6 py-3 inline-flex items-center justify-center;
+  }
 
-.neo-shadow {
-  box-shadow: 4px 4px 0px 0px var(--color-on-surface);
-}
+  .btn-neo-primary {
+    @apply btn-neo bg-primary-container text-on-surface;
+  }
 
-.neo-shadow-lg {
-  box-shadow: 8px 8px 0px 0px var(--color-on-surface);
-}
+  .btn-neo-secondary {
+    @apply btn-neo bg-secondary-container text-on-surface;
+  }
 
-.neo-interactive {
-  @apply transition-all duration-150;
-}
+  .btn-neo-tertiary {
+    @apply btn-neo bg-tertiary-container text-on-surface;
+  }
 
-.neo-interactive:active {
-  @apply translate-x-[2px] translate-y-[2px] shadow-none;
-}
+  .card-neo {
+    @apply neo-border neo-shadow bg-surface-container-lowest p-6;
+  }
 
-/* Custom Components based on Stitch Design */
-.btn-neo {
-  @apply neo-border neo-shadow neo-interactive font-headline font-bold uppercase tracking-tighter px-6 py-3 inline-flex items-center justify-center;
-}
+  .input-neo {
+    @apply neo-border bg-surface-container-lowest p-4 outline-none neo-interactive;
+  }
+  
+  .input-neo:focus {
+    @apply neo-shadow-lg -translate-x-1 -translate-y-1;
+  }
 
-.btn-neo-primary {
-  @apply btn-neo bg-primary-container text-on-surface;
-}
+  .badge-neo {
+    @apply neo-border font-headline font-bold uppercase text-[10px] px-2 py-1 bg-surface-container-lowest shadow-[2px_2px_0px_0px_rgba(48,52,44,1)];
+  }
 
-.btn-neo-secondary {
-  @apply btn-neo bg-secondary-container text-on-surface;
-}
+  /* Nav Styles */
+  .nav-item {
+    @apply flex items-center gap-4 p-4 font-headline font-bold uppercase tracking-tighter border-b-[3px] border-on-surface neo-interactive hover:bg-surface-container;
+  }
 
-.btn-neo-tertiary {
-  @apply btn-neo bg-tertiary-container text-on-surface;
-}
-
-.card-neo {
-  @apply neo-border neo-shadow bg-surface-container-lowest p-6;
-}
-
-.input-neo {
-  @apply neo-border bg-surface-container-lowest p-4 outline-none focus:neo-shadow-lg focus:-translate-x-1 focus:-translate-y-1 neo-interactive;
-}
-
-.badge-neo {
-  @apply neo-border font-headline font-bold uppercase text-[10px] px-2 py-1 bg-surface-container-lowest shadow-[2px_2px_0px_0px_rgba(48,52,44,1)];
-}
-
-/* Nav Styles */
-.nav-item {
-  @apply flex items-center gap-4 p-4 font-headline font-bold uppercase tracking-tighter border-b-[3px] border-on-surface neo-interactive hover:bg-surface-container;
-}
-
-.nav-item-active {
-  @apply bg-primary-container;
+  .nav-item-active {
+    @apply bg-primary-container;
+  }
 }
