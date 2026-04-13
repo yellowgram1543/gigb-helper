@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api";
 import useAuthStore from "../store/authStore";
+import { supabase } from "../supabaseClient";
 
 export default function TaskDetail() {
   const { id } = useParams();
@@ -12,6 +13,11 @@ export default function TaskDetail() {
   const [loading, setLoading] = useState(true);
   const [isAccepting, setIsAccepting] = useState(false);
   const [isConfirming, setIsConfirming] = useState(false);
+  
+  // New state for proof upload
+  const [uploading, setUploading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [statusMessage, setStatusMessage] = useState("");
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -60,6 +66,57 @@ export default function TaskDetail() {
     }
   };
 
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleSubmitProof = async () => {
+    if (!selectedFile) return alert("Select evidence file first.");
+    
+    setUploading(true);
+    setStatusMessage("Uploading evidence...");
+    
+    let filePath = "";
+    try {
+      // 1. Upload to Supabase bucket "completion-proofs"
+      const fileExt = selectedFile.name.split('.').pop();
+      const fileName = `${id}-${Date.now()}.${fileExt}`;
+      filePath = `proofs/${fileName}`;
+
+      const { data, error: uploadError } = await supabase.storage
+        .from('completion-proofs')
+        .upload(filePath, selectedFile);
+
+      if (uploadError) throw uploadError;
+
+      // 2. Get Public URL
+      const { data: { publicUrl } } = supabase.storage
+        .from('completion-proofs')
+        .getPublicUrl(filePath);
+
+      // 3. Update task via API
+      const response = await api.patch(`/tasks/${id}/completion-proof`, {
+        completionImageUrl: publicUrl
+      });
+
+      setTask(response.data);
+      setStatusMessage("Proof submitted! Waiting for poster approval.");
+      setSelectedFile(null);
+    } catch (err) {
+      console.error("Proof submission failed:", err);
+      setStatusMessage("Error: Proof transmission failed.");
+      
+      // Cleanup orphan file if it was uploaded
+      if (filePath) {
+        await supabase.storage.from('completion-proofs').remove([filePath]);
+      }
+    } finally {
+      setUploading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center py-20">
@@ -72,7 +129,7 @@ export default function TaskDetail() {
     return (
       <div className="max-w-xl mx-auto py-10 text-center">
         <h1 className="text-2xl uppercase opacity-40">Mission Not Found</h1>
-        <button className="btn-neo-secondary mt-4 bg-secondary-container text-[10px] py-2 px-4" onClick={() => navigate("/")}>RETURN TO GRID</button>
+        <button className="btn-neo mt-4 bg-secondary-container text-[10px] py-2 px-4 shadow-[4px_4px_0px_0px_rgba(48,52,44,1)]" onClick={() => navigate("/")}>RETURN TO GRID</button>
       </div>
     );
   }
@@ -136,6 +193,19 @@ export default function TaskDetail() {
               <img src={task.imageUrl} alt={task.title} className="w-full h-auto grayscale hover:grayscale-0 transition-all duration-500" />
             </div>
           )}
+
+          {/* Proof Submission Display */}
+          {task.completionImageUrl && (
+            <div className="space-y-2 mt-8">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined text-secondary text-sm">verified</span>
+                <label className="font-headline font-black text-[10px] uppercase tracking-widest text-secondary">Proof Submitted ✓</label>
+              </div>
+              <div className="neo-border shadow-[4px_4px_0px_0px_rgba(28,107,80,0.3)] overflow-hidden bg-surface-container-low max-w-[200px]">
+                <img src={task.completionImageUrl} alt="Completion Proof" className="w-full h-auto" />
+              </div>
+            </div>
+          )}
           
           <div className="card-neo bg-surface-container relative overflow-visible mt-6 p-3">
             <div className="absolute -top-2.5 -left-2.5 badge-neo bg-surface-container-lowest text-[8px] py-0.5 px-2">TARGET ZONE</div>
@@ -173,7 +243,33 @@ export default function TaskDetail() {
         </div>
       ) : task.status === "ASSIGNED" ? (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 z-50">
-          <div className="card-neo bg-surface-container-lowest p-4 shadow-[8px_8px_0px_0px_rgba(48,52,44,1)] border-[3px]">
+          <div className="card-neo bg-surface-container-lowest p-4 shadow-[8px_8px_0px_0px_rgba(48,52,44,1)] border-[3px] space-y-4">
+            
+            {/* Proof Upload Section */}
+            {user?.id === task.helperId && !task.completionImageUrl && (
+              <div className="neo-border p-4 bg-surface-container-low border-dashed">
+                <p className="font-headline font-black text-[10px] uppercase mb-3 opacity-60">Upload Evidence of Completion</p>
+                <div className="flex flex-col gap-3">
+                  <input 
+                    type="file" 
+                    onChange={handleFileChange}
+                    className="text-xs font-headline font-black uppercase"
+                    accept="image/*"
+                  />
+                  <button 
+                    onClick={handleSubmitProof}
+                    disabled={uploading || !selectedFile}
+                    className={`btn-neo bg-primary-container py-2 text-xs font-black shadow-[3px_3px_0px_0px_rgba(48,52,44,1)] ${uploading ? 'animate-pulse' : ''}`}
+                  >
+                    {uploading ? "TRANSMITTING..." : "SUBMIT PROOF"}
+                  </button>
+                  {statusMessage && (
+                    <p className="text-[9px] font-black uppercase text-secondary animate-in fade-in">{statusMessage}</p>
+                  )}
+                </div>
+              </div>
+            )}
+
             {task.payment_confirmed_helper ? (
               <div className="bg-surface-container neo-border p-4 text-center">
                  <p className="font-headline font-black text-xs uppercase m-0 animate-pulse">Waiting for Poster confirmation...</p>
@@ -181,12 +277,15 @@ export default function TaskDetail() {
               </div>
             ) : (
               <button 
-                className={`btn-neo-secondary w-full bg-secondary-container py-4 text-lg font-black ${isConfirming ? 'animate-pulse' : ''}`}
+                className={`btn-neo bg-secondary-container w-full py-4 text-lg font-black shadow-[4px_4px_0px_0px_rgba(48,52,44,1)] ${isConfirming ? 'animate-pulse' : ''}`}
                 onClick={handleConfirmHelper}
-                disabled={isConfirming}
+                disabled={isConfirming || (user?.id === task.helperId && !task.completionImageUrl)}
               >
                 {isConfirming ? "TRANSMITTING..." : "MARK AS COMPLETE →"}
               </button>
+            )}
+            {user?.id === task.helperId && !task.completionImageUrl && !task.payment_confirmed_helper && (
+              <p className="text-[8px] font-black text-center uppercase opacity-50">Upload proof to enable final confirmation</p>
             )}
           </div>
         </div>
