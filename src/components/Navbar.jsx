@@ -17,6 +17,7 @@ export default function Navbar() {
   const navItems = [
     { name: "Discover", path: "/", icon: "explore" },
     { name: "My Gigs", path: "/active", icon: "work_history" },
+    { name: "The Vault", path: "/vault", icon: "account_balance" },
   ];
 
   return (

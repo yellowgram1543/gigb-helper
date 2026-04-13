@@ -47,6 +47,10 @@ export default function App() {
               element={isAuthenticated ? <ActiveGigs /> : <Navigate to="/auth" />} 
             />
             <Route 
+              path="/vault" 
+              element={isAuthenticated ? <Vault /> : <Navigate to="/auth" />} 
+            />
+            <Route 
               path="/chat/:id" 
               element={isAuthenticated ? <Chat /> : <Navigate to="/auth" />} 
             />

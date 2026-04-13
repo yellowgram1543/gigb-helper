@@ -34,9 +34,17 @@ export default function Home() {
             DISCOVERY MODE
          </div>
          <h1 className="text-4xl md:text-5xl mb-2 uppercase leading-tight">Find Local Gigs 📍</h1>
-         <p className="font-headline font-bold text-sm uppercase tracking-tight opacity-80">
-           {loading ? "Scanning the Grid..." : `Spotted ${tasks.length} opportunities in your perimeter.`}
-         </p>
+         <div className="flex flex-wrap gap-4 mt-4">
+           <p className="font-headline font-bold text-sm uppercase tracking-tight opacity-80 flex-grow">
+             {loading ? "Scanning the Grid..." : `Spotted ${tasks.length} opportunities in your perimeter.`}
+           </p>
+           <button 
+             onClick={() => navigate("/vault")}
+             className="btn-neo bg-primary-container text-xs px-4 py-2 flex items-center gap-2 shadow-[4px_4px_0px_0px_rgba(48,52,44,1)]"
+           >
+             💰 MY VAULT
+           </button>
+         </div>
       </header>
 
       {loading ? (
