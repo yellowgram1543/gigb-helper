@@ -11,6 +11,7 @@ export default function TaskDetail() {
   const [task, setTask] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAccepting, setIsAccepting] = useState(false);
+  const [isConfirming, setIsConfirming] = useState(false);
 
   useEffect(() => {
     const fetchTask = async () => {
@@ -29,19 +30,33 @@ export default function TaskDetail() {
   const handleAcceptGig = async () => {
     setIsAccepting(true);
     try {
-      await api.patch(`/tasks/${id}`, {
-        status: "ASSIGNED",
+      await api.patch(`/tasks/${id}/accept`, {
         helper: {
           name: user?.user_metadata?.full_name || "Verified Helper",
           rating: "5.0",
           reviews: 1
         }
       });
-      navigate("/active");
+      // Re-fetch task to get updated status/escrow
+      const response = await api.get(`/tasks/${id}`);
+      setTask(response.data);
     } catch (err) {
       console.error("Error accepting task:", err);
       alert("Deployment failed. Coordinate conflict.");
       setIsAccepting(false);
+    }
+  };
+
+  const handleConfirmHelper = async () => {
+    setIsConfirming(true);
+    try {
+      const response = await api.patch(`/tasks/${id}/confirm-helper`);
+      setTask(response.data);
+    } catch (err) {
+      console.error("Confirmation failed:", err);
+      alert("Failed to confirm completion. System error.");
+    } finally {
+      setIsConfirming(false);
     }
   };
 
@@ -62,8 +77,21 @@ export default function TaskDetail() {
     );
   }
 
+  const EscrowBadge = ({ status }) => {
+    if (status === "locked") {
+      return <span className="badge-neo bg-primary-container text-[7px] mb-2 block w-fit">💰 Escrow Locked</span>;
+    }
+    if (status === "released") {
+      return <span className="badge-neo bg-secondary-container text-[7px] mb-2 block w-fit">✅ Paid</span>;
+    }
+    if (status === "refunded") {
+      return <span className="badge-neo bg-error-container text-[7px] mb-2 block w-fit">↩ Refunded</span>;
+    }
+    return null;
+  };
+
   return (
-    <div className="max-w-2xl mx-auto space-y-8 pb-20">
+    <div className="max-w-2xl mx-auto space-y-8 pb-32">
       <button 
         onClick={() => navigate(-1)} 
         className="flex items-center gap-2 font-headline font-black uppercase text-[10px] opacity-60 hover:opacity-100 transition-opacity"
@@ -72,12 +100,20 @@ export default function TaskDetail() {
         Back to Local Grid
       </button>
 
+      {task.escrow_status === "released" && (
+        <div className="card-neo bg-secondary-container text-center py-4 animate-in fade-in slide-in-from-top duration-500">
+           <h2 className="text-xl uppercase m-0 leading-none">Payment Released to You ✅</h2>
+           <p className="font-headline font-black text-[8px] uppercase tracking-widest mt-1 opacity-70">Funds have been added to your digital wallet.</p>
+        </div>
+      )}
+
       <div className="card-neo bg-surface-container-lowest relative overflow-visible">
         <div className="absolute -top-3 -right-3 badge-neo bg-secondary-container px-4 py-1 text-[9px] shadow-[2px_2px_0px_0px_rgba(48,52,44,1)] uppercase">
           {task.status}
         </div>
         
         <header className="mb-6 pb-6 border-b-[2px] border-on-surface border-dashed">
+          <EscrowBadge status={task.escrow_status} />
           <h1 className="text-3xl md:text-4xl uppercase leading-none mb-3">{task.title}</h1>
           <div className="flex items-center gap-3">
              <span className="font-headline font-black text-[8px] uppercase opacity-50 tracking-widest text-secondary">Task Code: {task._id.slice(-8)}</span>
@@ -135,10 +171,29 @@ export default function TaskDetail() {
             </div>
           </div>
         </div>
+      ) : task.status === "ASSIGNED" ? (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-full max-w-xl px-4 z-50">
+          <div className="card-neo bg-surface-container-lowest p-4 shadow-[8px_8px_0px_0px_rgba(48,52,44,1)] border-[3px]">
+            {task.payment_confirmed_helper ? (
+              <div className="bg-surface-container neo-border p-4 text-center">
+                 <p className="font-headline font-black text-xs uppercase m-0 animate-pulse">Waiting for Poster confirmation...</p>
+                 <p className="font-headline font-black text-[8px] uppercase opacity-50 mt-1">Funds will be released automatically once HQ verifies.</p>
+              </div>
+            ) : (
+              <button 
+                className={`btn-neo-secondary w-full bg-secondary-container py-4 text-lg font-black ${isConfirming ? 'animate-pulse' : ''}`}
+                onClick={handleConfirmHelper}
+                disabled={isConfirming}
+              >
+                {isConfirming ? "TRANSMITTING..." : "MARK AS COMPLETE →"}
+              </button>
+            )}
+          </div>
+        </div>
       ) : (
         <div className="card-neo text-center py-8 bg-surface-container border-dashed border-[3px]">
-          <h3 className="text-xl uppercase opacity-50 italic">Deployment Restricted: {task.status}</h3>
-          <p className="font-headline font-black text-[8px] uppercase tracking-[0.15em] mt-1">This opportunity has been claimed or closed.</p>
+          <h3 className="text-xl uppercase opacity-50 italic">Status: {task.status}</h3>
+          <p className="font-headline font-black text-[8px] uppercase tracking-[0.15em] mt-1">This operation is closed or archived.</p>
         </div>
       )}
     </div>
