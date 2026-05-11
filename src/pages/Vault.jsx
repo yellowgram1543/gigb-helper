@@ -26,8 +26,7 @@ export default function Vault() {
       if (!user || !user.id) return;
       
       try {
-        // user.id from Supabase matches the helperId we expect in our MongoDB
-        const response = await api.get(`/tasks/earnings/${user.id}`);
+        const response = await api.get("/tasks/earnings/me");
         setEarnings(response.data);
       } catch (err) {
         console.error("Error fetching earnings:", err);
