@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "../supabaseClient";
 
 export default function Auth() {
@@ -9,7 +8,6 @@ export default function Auth() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,8 +41,6 @@ export default function Auth() {
         if (signUpError) throw signUpError;
         alert("Account created. Check your email.");
       }
-      
-      navigate("/");
     } catch (err) {
       setError(err.message || "System error. Retry.");
     } finally {

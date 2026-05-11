@@ -6,6 +6,7 @@ import TaskDetail from "./pages/TaskDetail";
 import ActiveGigs from "./pages/ActiveGigs";
 import Chat from "./pages/Chat";
 import Navbar from "./components/Navbar";
+import Vault from "./pages/Vault";
 import useAuthStore from "./store/authStore";
 
 export default function App() {
