@@ -30,7 +30,13 @@ export default function TaskDetail() {
         setLoading(false);
       }
     };
+    
     fetchTask();
+
+    // Auto-Sync: Check for updates every 5 seconds
+    const syncInterval = setInterval(fetchTask, 5000);
+    
+    return () => clearInterval(syncInterval); // Cleanup on leave
   }, [id]);
 
   const handleAcceptGig = async () => {
