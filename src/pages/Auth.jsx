@@ -14,7 +14,7 @@ export default function Auth() {
     setIsLoading(true);
     try {
       const { error: loginError } = await supabase.auth.signInWithPassword({
-        email: "test@example.com", // Update with your test user email
+        email: "anushaarpit@gmail.com", // Update with your test user email
         password: "password123",   // Update with your test user password
       });
       if (loginError) throw loginError;
