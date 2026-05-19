@@ -9,6 +9,22 @@ export default function Auth() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const handleQuickLogin = async () => {
+    setError("");
+    setIsLoading(true);
+    try {
+      const { error: loginError } = await supabase.auth.signInWithPassword({
+        email: "test@example.com", // Update with your test user email
+        password: "password123",   // Update with your test user password
+      });
+      if (loginError) throw loginError;
+    } catch (err) {
+      setError(err.message || "Quick login failed. Ensure test credentials exist.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -63,6 +79,19 @@ export default function Auth() {
             {isLogin ? "GigB / Helper Force" : "Deploy your skills locally"}
           </p>
         </header>
+
+        {import.meta.env.MODE === 'development' && (
+          <div className="mb-4">
+            <button
+              type="button"
+              onClick={handleQuickLogin}
+              disabled={isLoading}
+              className="w-full bg-primary text-on-primary py-2 font-headline font-black text-[10px] uppercase tracking-widest neo-border shadow-[2px_2px_0px_0px_rgba(48,52,44,1)] active:shadow-none hover:translate-x-[1px] hover:translate-y-[1px] transition-all"
+            >
+              ⚡ QUICK TEST LOGIN
+            </button>
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {!isLogin && (
